@@ -1,0 +1,12 @@
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: acm-policies-channel
+  namespace: acm-policies
+  annonotations:
+    apps.open-cluster-management.io/reconcile-rate: high  # 3 minute updates
+spec:
+  type: Git
+  pathname: 'https://github.com/dtrieu80/acm-bootstrap.git'
+  secretRef:
+    name: github-user-pat
