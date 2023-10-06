@@ -1,0 +1,177 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: pl-ocp-gitops-config
+  annotations:
+    policy.open-cluster-management.io/description: 'Configure GitOps Operator'
+    policy.open-cluster-management.io/standards: ''
+    policy.open-cluster-management.io/categories: ''
+    policy.open-cluster-management.io/controls: ''
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gitops-configuration
+        spec:
+          remediationAction: enforce
+          severity: medium
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: openshift-gitops-cluster-admin
+                subjects:
+                  - kind: ServiceAccount
+                    name: openshift-gitops-argocd-application-controller
+                    namespace: openshift-gitops
+                  - kind: ServiceAccount
+                    name: openshift-gitops-applicationset-controller
+                    namespace: openshift-gitops
+                  - kind: ServiceAccount
+                    name: openshift-gitops-argocd-server
+                    namespace: openshift-gitops
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: cluster-admin
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: argoproj.io/v1alpha1
+                kind: ArgoCD
+                metadata:
+                  finalizers:
+                  - argoproj.io/finalizer
+                  name: openshift-gitops
+                  namespace: openshift-gitops
+                spec:
+                  kustomizeBuildOptions: "--enable-helm"
+                  resourceTrackingMethod: annotation
+                  applicationSet:
+                    resources:
+                      limits:
+                        cpu: "2"
+                        memory: 1Gi
+                      requests:
+                        cpu: 250m
+                        memory: 512Mi
+                    webhookServer:
+                      ingress:
+                        enabled: false
+                      route:
+                        enabled: false
+                  controller:
+                    processors: {}
+                    resources:
+                      limits:
+                        cpu: "2"
+                        memory: 2Gi
+                      requests:
+                        cpu: 250m
+                        memory: 1Gi
+                    sharding: {}
+                  grafana:
+                    enabled: false
+                    ingress:
+                      enabled: false
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 256Mi
+                      requests:
+                        cpu: 250m
+                        memory: 128Mi
+                    route:
+                      enabled: false
+                  ha:
+                    enabled: false
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 256Mi
+                      requests:
+                        cpu: 250m
+                        memory: 128Mi
+                  initialSSHKnownHosts: {}
+                  monitoring:
+                    enabled: false
+                  notifications:
+                    enabled: false
+                  prometheus:
+                    enabled: false
+                    ingress:
+                      enabled: false
+                    route:
+                      enabled: false
+                  rbac:
+                    # Default privileges for cluster-admins
+                    policy: |
+                      g, system:cluster-admins, role:admin
+                      g, cluster-admins, role:admin
+                    scopes: '[groups]'
+                  redis:
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 256Mi
+                      requests:
+                        cpu: 250m
+                        memory: 128Mi
+                  resourceExclusions: |
+                    - apiGroups:
+                      - tekton.dev
+                      clusters:
+                      - '*'
+                      kinds:
+                      - TaskRun
+                      - PipelineRun
+                  server:
+                    autoscale:
+                      enabled: false
+                    grpc:
+                      ingress:
+                        enabled: false
+                    ingress:
+                      enabled: false
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 256Mi
+                      requests:
+                        cpu: 125m
+                        memory: 128Mi
+                    route:
+                      enabled: true
+                    service:
+                      type: ""
+                  sso:
+                    dex:
+                      openShiftOAuth: true
+                      resources:
+                        limits:
+                          cpu: 500m
+                          memory: 256Mi
+                        requests:
+                          cpu: 250m
+                          memory: 128Mi
+                    provider: dex
+                  tls:
+                    ca: {}
+                    initialCerts: {}
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: github-user-pat
+                  namespace: openshift-gitops
+                  labels:
+                    argocd.argoproj.io/secret-type: repository
+                data:
+                  url: '{{ (printf "%s" "https://github.com/dtrieu80/acm-bootstrap.git") | base64enc }}'
+                  username: '{{hub fromSecret "acm-policies" "sa-acm-ro-git-pat" "user" hub}}'
+                  password: '{{hub fromSecret "acm-policies" "sa-acm-ro-git-pat" "accessToken" hub}}'
