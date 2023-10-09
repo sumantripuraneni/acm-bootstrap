@@ -1,0 +1,9 @@
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: pls-clusterconfig
+spec:
+  description: Cluster Day1 Configuration
+  policies:
+    - pl-ocp-gitops-install
+    - pl-ocp-gitops-config

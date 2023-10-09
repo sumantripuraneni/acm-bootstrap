@@ -1,0 +1,24 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: pb-lab
+placementRef:
+  name: pm-lab
+  kind: Placement
+  apiGroup: cluster.open-cluster-management.io
+subjects:
+- name: pls-clusterconfig
+  apiGroup: policy.open-cluster-management.io
+  kind: PolicySet
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: pm-lab
+spec:
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchExpressions:
+          - {key: versedt.dev/environment, operator: In, values: ["lab"]}
