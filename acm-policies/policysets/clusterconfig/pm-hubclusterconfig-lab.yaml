@@ -7,9 +7,8 @@ spec:
   predicates:
   - requiredClusterSelector:
       labelSelector:
-        matchLabels:
-          local-cluster: true
         matchExpressions:
+          - {key: local-cluster, operator: In, values: ["true"]}
           - {key: versedt.dev/acm-enabled, operator: In, values: ["true"]}
 ---
 apiVersion: policy.open-cluster-management.io/v1
