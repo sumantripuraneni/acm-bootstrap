@@ -173,5 +173,5 @@ spec:
                     argocd.argoproj.io/secret-type: repository
                 data:
                   url: '{{ (printf "%s" "https://github.com/dtrieu80/acm-bootstrap.git") | base64enc }}'
-                  username: '{{hub fromSecret "acm-policies" "sa-acm-ro-git-pat" "user" hub}}'
-                  password: '{{hub fromSecret "acm-policies" "sa-acm-ro-git-pat" "accessToken" hub}}'
+                  username: '{{hub fromSecret "acm-policies" "github-user-pat" "user" hub}}'
+                  password: '{{hub fromSecret "acm-policies" "github-user-pat" "accessToken" hub}}'
