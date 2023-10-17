@@ -10,8 +10,7 @@ spec:
         matchLabels:
           local-cluster: true
         matchExpressions:
-          - {key: versedt.dev/environment, operator: In, values: ["lab"]}
-
+          - {key: versedt.dev/acm-enabled, operator: In, values: ["true"]}
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding

@@ -8,6 +8,7 @@ spec:
   - requiredClusterSelector:
       labelSelector:
         matchExpressions:
+          - {key: versedt.dev/acm-enabled, operator: In, values: ["true"]}
           - {key: versedt.dev/environment, operator: In, values: ["lab"]}
 ---
 apiVersion: policy.open-cluster-management.io/v1
