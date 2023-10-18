@@ -1,4 +1,4 @@
-clusterName: demo-mc6
+clusterName: demo-mc8
 baseDomain: 9rpv6.azure.redhatworkshops.io
 controlplaneReplicas: 3
 computeReplicas: 3

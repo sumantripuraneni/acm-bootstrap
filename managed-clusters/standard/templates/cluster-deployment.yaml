@@ -13,7 +13,7 @@ spec:
   clusterName: {{ .Values.clusterName }}
   controlPlaneConfig:
     servingCertificates: {}
-  installAttemptsLimit: 1
+  installAttemptsLimit: 3
   installed: false
   platform:
     azure:
