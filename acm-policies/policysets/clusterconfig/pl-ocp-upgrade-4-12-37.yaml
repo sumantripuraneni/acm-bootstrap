@@ -1,0 +1,31 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: pl-ocp-upgrade-4-12-37
+  annotations:
+    policy.open-cluster-management.io/description: 'Upgrade OCP to 4.12.37'
+    policy.open-cluster-management.io/standards: ''
+    policy.open-cluster-management.io/categories: ''
+    policy.open-cluster-management.io/controls: ''
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: update-cluster-version
+        spec:
+          remediationAction: enforce
+          severity: low
+          object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: config.openshift.io/v1
+              kind: ClusterVersion
+              metadata:
+                name: version
+              spec:
+                desiredUpdate:
+                  force: true
+                  version: 4.12.37

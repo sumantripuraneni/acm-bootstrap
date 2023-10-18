@@ -1,0 +1,25 @@
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: pm-ocp-upgrade-4-12-37
+spec:
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchExpressions:
+          - {key: versedt.dev/acm-enabled, operator: In, values: ["true"]}
+          - {key: versedt.dev/upgradeTo, operator: In, values: ["4.12.37"]}
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: pb-ocp-upgrade-4-12-37
+placementRef:
+  name: pm-ocp-upgrade-4-12-37
+  kind: Placement
+  apiGroup: cluster.open-cluster-management.io
+subjects:
+- name: pl-ocp-upgrade-4-12-37
+  apiGroup: policy.open-cluster-management.io
+  kind: Policy
